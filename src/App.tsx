@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {Viewer, Entity, PointGraphics, GeoJsonDataSource, KmlDataSource, Scene, Globe, Camera} from "resium";
+import { Cartesian3 } from "cesium";
+
+// 포인터 위치
+const position = Cartesian3.fromDegrees(74.0707383, 40.7117244, 100);
+const data = {
+    type: "Feature",
+    properties: {
+        name: "Coors Field",
+        amenity: "Baseball Stadium",
+        popupContent: "This is where the Rockies play!",
+    },
+    geometry: {
+        type: "Point",
+        coordinates: [-104.99404, 39.75621],
+    },
+};
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <Viewer full>
+            <Scene>
+                <Globe>
+                    <Camera>
+                        <Entity position={position} name="Tokyo" description="Hello, world.">
+                            <PointGraphics pixelSize={10} />
+                        </Entity>
+                    </Camera>
+                </Globe>
+            </Scene>
+            {/*<GeoJsonDataSource data={"your_geo_json.geojson"} />*/}
+            {/*<KmlDataSource data={"your_geo_json.kml"} />*/}
+            {/*<GeoJsonDataSource data={data} />*/}
+        </Viewer>
+    );
 }
 
-export default App
+export default App;
