@@ -9,14 +9,11 @@ import {
 } from "resium";
 
 import * as Cesium from "cesium";
-import {
-    eastNorthUpToFixedFrame, Matrix3, Matrix4,
+import {Viewer as CesiumViewer, Math as CesiumMath, createWorldTerrainAsync} from "cesium";
+import { eastNorthUpToFixedFrame, Ellipsoid, Matrix3, Matrix4,
     northEastDownToFixedFrame,
     northUpEastToFixedFrame, northWestUpToFixedFrame,
-    Transforms,
-    Viewer as CesiumViewer
-} from "cesium";
-import {Cartesian3, Color, CornerType,Cartographic} from "cesium";
+    Transforms, Cartesian3, Color, CornerType,Cartographic} from "cesium";
 import {useEffect, useRef, useState} from "react";
 
 // 포인터 위치
@@ -45,48 +42,40 @@ const cameraDest = Cartesian3.fromDegrees(125.0, 40.0, 1000);
 const modelMatrix = Transforms.eastNorthUpToFixedFrame(origin);
 function App() {
 
-    const ref=useRef<CesiumComponentRef<CesiumViewer>>(null);
+    const viewerRef=useRef<CesiumComponentRef<CesiumViewer>>(null);
     const [flyGetPosition,setFlyGetPosition]=useState(flyToPoint);
-
+    const [isShow,setIsShow] = useState(false)
     useEffect(() => {
-        console.log('ref.current?.',ref.current)
-        if(ref.current?.cesiumElement) {
+        console.log('ref.current?.',viewerRef.current)
+        if(viewerRef.current?.cesiumElement) {
             console.log('세슘 요소 있음.')
         }else{
             console.log('세슘 요소 없음.')
         }
     }, []);
+
+
     const getPosition=(e)=>{
-        const scene =Cesium.Scene
-        // 라디안 단위
-        const clickedPosition=e.position
-        console.log('clickedPosition?',clickedPosition)
-        console.log('scene?',scene)
 
-       //  const eventhandler=new Cesium.ScreenSpaceEventHandler(scene)
-       // eventhandler.setInputAction(function(movement){
-       //     console.log('movement????',movement)
-       //  console.log('Cartographic',new Cesium.Cartographic)
-       //     const cartographic = Cartographic.fromCartesian(clickedPosition.x,clickedPosition.y,100);
-       //  console.log('cartographic?',cartographic)
-       //     const longitude = Cesium.Math.toDegrees(cartographic.longitude);
-       //     const latitude = Cesium.Math.toDegrees(cartographic.latitude);
-       //     console.log('longitude?',longitude)
-       //     console.log('latitude?',latitude)
-       // },Cesium.ScreenSpaceEventType.LEFT_CLICK)
-
-        // console.log('cesiumVeiwer point',CesiumViewer.prototype.entities)
-        // setFlyGetPosition(Cartesian3.fromDegrees(x,y,2000))
+        const viewer = viewerRef.current.cesiumElement;
+        if(viewer) {
+            const pickedPosition=viewer.scene.pickPosition(e.position)
+            viewer.camera.flyTo({
+                destination: pickedPosition,
+                duration: 2.0,
+            });
+            console.log('???',viewer.scene.pickPosition(e.position))
+        }
     }
     const trackedEntity=(entity)=>{
         console.log('entity',entity)
     }
     return (
-        <Viewer full ref={ref}>
+        <Viewer full ref={viewerRef}>
 
             {/*<CameraLookAt {...lookAtPoint}/>*/}
             {/*<Camera />*/}
-            {/*<CameraFlyTo destination={flyGetPosition}/>*/}
+            <CameraFlyTo destination={flyGetPosition}/>
             {/*<Scene/>*/}
             <Entity name='Corridor' position={Cartesian3.fromDegrees(128.0, 40.0,100)} onClick={getPosition}>
                 <CorridorGraphics
@@ -112,32 +101,35 @@ function App() {
                     outlineColor={Color.DARKGREEN}
                 />
             </Entity>
-            <CameraFlyTo destination={cameraDest}/>
-            <Model url={"Tile_+000_+002.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
-                   minimumPixelSize={128}
-                   maximumScale={20000}
-                   onClick={getPosition}
-            >
-            </Model>
-            <Model url={"Tile_+000_+003.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
-                   minimumPixelSize={128}
-                   maximumScale={20000}
-                   onClick={getPosition}
-            >
-            </Model>
-            <Model url={"Tile_+001_+001.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
-                   minimumPixelSize={128}
-                   maximumScale={20000}
-                   onClick={getPosition}
-            >
-            </Model>
-            <Model url={"Tile_+001_+002.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
-                           minimumPixelSize={128}
-                           maximumScale={20000}
-                           onClick={getPosition}
-            >
-            </Model>
-
+            {/*<CameraFlyTo destination={cameraDest}/>*/}
+            {isShow&&
+                <>
+                <Model url={"Tile_+000_+002.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
+                       minimumPixelSize={128}
+                       maximumScale={20000}
+                       onClick={getPosition}
+                >
+                </Model>
+                <Model url={"Tile_+000_+003.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
+                       minimumPixelSize={128}
+                       maximumScale={20000}
+                       onClick={getPosition}
+                >
+                </Model>
+                <Model url={"Tile_+001_+001.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
+                       minimumPixelSize={128}
+                       maximumScale={20000}
+                       onClick={getPosition}
+                >
+                </Model>
+                <Model url={"Tile_+001_+002.obj_deoffset.glb"} modelMatrix={rotatedFixedFrame}
+                               minimumPixelSize={128}
+                               maximumScale={20000}
+                               onClick={getPosition}
+                >
+                </Model>
+                </>
+            }
             {/*<PointPrimitiveCollection modelMatrix={Transforms.eastNorthUpToFixedFrame(center)}>*/}
             {/*    <PointPrimitive color={Color.ORANGE} position={new Cartesian3(58.0,58.0,0.0)}  onClick={(e)=>getPosition(e)}/>*/}
             {/*    <PointPrimitive color={Color.YELLOW} position={new Cartesian3(100000.0, -200000.0, 0.0)}/>*/}
