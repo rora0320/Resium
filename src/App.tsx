@@ -5,15 +5,12 @@ import {
     CameraFlyHome,
     CameraLookAt,
     PointPrimitiveCollection,
-    PointPrimitive, Camera, CorridorGraphics, CylinderGraphics, CesiumComponentRef, Scene, Model,
+    PointPrimitive, Camera, CorridorGraphics, CylinderGraphics, CesiumComponentRef, Model,
 } from "resium";
 
 import * as Cesium from "cesium";
-import {Viewer as CesiumViewer, Math as CesiumMath, createWorldTerrainAsync} from "cesium";
-import { eastNorthUpToFixedFrame, Ellipsoid, Matrix3, Matrix4,
-    northEastDownToFixedFrame,
-    northUpEastToFixedFrame, northWestUpToFixedFrame,
-    Transforms, Cartesian3, Color, CornerType,Cartographic} from "cesium";
+import {Ellipsoid, Viewer as CesiumViewer} from "cesium";
+import { Matrix3, Matrix4, Transforms, Cartesian3, Color, CornerType } from "cesium";
 import {useEffect, useRef, useState} from "react";
 
 // 포인터 위치
@@ -28,12 +25,10 @@ const lookAtPoint = {
 const flyToPoint=Cartesian3.fromDegrees(130.0707383,40.7117244,10000000);
 const center = Cartesian3.fromDegrees(125.59777, 40.03883);
 
-
 //model 위치 가져온것
 const origin = Cartesian3.fromDegrees(125.0, 40.0, 10);
 const rotationAngle = Cesium.Math.toRadians(-90);
-
-// 90도 회전된 프레임 생성
+// y축 90도 회전된 프레임 생성
 const rotationMatrix = Matrix3.fromRotationY(rotationAngle); // Y축을 중심으로 90도 회전
 const fixedFrame = Transforms.northWestUpToFixedFrame(origin);
 const rotatedFixedFrame = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatrix, new Matrix4());
@@ -58,18 +53,49 @@ function App() {
     const getPosition=(e)=>{
 
         const viewer = viewerRef.current.cesiumElement;
-        if(viewer) {
-            const pickedPosition=viewer.scene.pickPosition(e.position)
+        const pickPoint = viewer.scene.pick(e.position)
+
+        const pickPointValue = pickPoint.id.position._value;
+        const flyPositionCartographic = Ellipsoid.WGS84.cartesianToCartographic(pickPointValue);
+
+        //경도(세로)
+        const longitude = Cesium.Math.toDegrees(flyPositionCartographic.longitude);
+        //위도(가로)
+        const latitude = Cesium.Math.toDegrees(flyPositionCartographic.latitude);
+        const height = flyPositionCartographic.height;
+
+        const flyPositionCartesian3 = Cartesian3.fromDegrees(longitude, latitude, 400);
+
+        if (pickPoint && pickPoint.id && pickPoint.id.position) {
+
             viewer.camera.flyTo({
-                destination: pickedPosition,
+                destination: flyPositionCartesian3,
                 duration: 2.0,
             });
-            console.log('???',viewer.scene.pickPosition(e.position))
+        } else {
+            console.error('Unable to determine valid flyPosition');
         }
+
+        // const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+        //
+        // handler.setInputAction((click) => {
+        //     console.log('movement',click)
+        //     const pickedPosition=viewer.scene.pickPosition(e.position)
+        //     console.log('pickedPosition',pickedPosition)
+        // }, ScreenSpaceEventType.LEFT_CLICK);
+        // if(viewer) {
+        //     const pickedPosition=viewer.scene.pickPosition(e.position)
+        //     console.log('???',pickedPosition)
+        //     pickedPosition.z = 3696375;
+        //     console.log('new pickedPosition',pickedPosition)
+        //     // viewer.camera.flyTo({
+        //     //     destination: pickedPosition,
+        //     //     duration: 2.0,
+        //     // });
+        //
+        // }
     }
-    const trackedEntity=(entity)=>{
-        console.log('entity',entity)
-    }
+
     return (
         <Viewer full ref={viewerRef}>
 
