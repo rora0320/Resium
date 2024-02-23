@@ -1,0 +1,38 @@
+{
+  "asset": {
+    "version": "1.0"
+  },
+  "properties": {
+    "Height": {
+      "minimum": 1,
+      "maximum": 241.6
+    }
+  },
+  "root": {
+    "boundingVolume": {
+      "region": [
+        -1.3197004795898053,
+        0.6988582109,
+        -1.3196595204101946,
+        0.6988897891,
+        0,
+        20
+      ]
+    },
+    "refine": "ADD",
+    "geometricError": 268.37878244706053,
+    "content": {
+      "uri": "Tile_+000_+002.obj_deoffset.glb",
+      "boundingVolume": {
+        "region": [
+          -1.3197004795898053,
+          0.6988582109,
+          -1.3196595204101946,
+          0.6988897891,
+          0,
+          20
+        ]
+      }
+    }
+  }
+}
