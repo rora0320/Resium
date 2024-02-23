@@ -155,8 +155,9 @@ function App() {
                 {/*>*/}
                 {/*</Model>*/}
             <Cesium3DTileset
-                url={"test.json"}
-
+                url={"sample.json"}
+                modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
+                    Cesium.Cartesian3.fromDegrees(-75.152325, 39.94704, 0.0))}
                 onReady={tileset => {
                     console.log('tileset',tileset)
                   viewerRef.current?.cesiumElement?.zoomTo(tileset);
