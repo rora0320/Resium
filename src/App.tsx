@@ -26,11 +26,11 @@ const flyToPoint=Cartesian3.fromDegrees(130.0707383,36.329436052073596,10000000)
 const center = Cartesian3.fromDegrees(125.59777, 40.03883);
 
 //model 위치 가져온것
-const origin = Cartesian3.fromDegrees(127.38196357284114, 36.329436052073596, 10);
+const origin = Cartesian3.fromDegrees(127.38196357284114, 36.329436052073596, 1);
 const rotationAngle = Cesium.Math.toRadians(-90);
 // y축 90도 회전된 프레임 생성
-const rotationMatrix = Matrix3.fromRotationY(rotationAngle); // Y축을 중심으로 90도 회전
-const fixedFrame = Transforms.northWestUpToFixedFrame(origin);
+const rotationMatrix = Matrix3.fromRotationX(rotationAngle); // Y축을 중심으로 90도 회전
+const fixedFrame = Transforms.eastNorthUpToFixedFrame(origin);
 const rotatedFixedFrame = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatrix, new Matrix4());
 
 const cameraDest = Cartesian3.fromDegrees(125.0, 40.0, 1000);
@@ -155,9 +155,12 @@ function App() {
                 {/*>*/}
                 {/*</Model>*/}
             <Cesium3DTileset
-                url={"sample.json"}
-                modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
-                    Cesium.Cartesian3.fromDegrees(-75.152325, 39.94704, 0.0))}
+                url={"glbTest.json"}
+                modelMatrix={rotatedFixedFrame}
+                // modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
+                //     Cesium.Cartesian3.fromDegrees(75.152325, 39.94704, 0.0))}
+                // modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
+                //     Cesium.Cartesian3.fromDegrees(75.152325, 39.94704, 0.0))}
                 onReady={tileset => {
                     console.log('tileset',tileset)
                   viewerRef.current?.cesiumElement?.zoomTo(tileset);

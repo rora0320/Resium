@@ -10,29 +10,50 @@
   },
   "root": {
     "boundingVolume": {
-      "region": [
-        -1.3197004795898053,
-        0.6988582109,
-        -1.3196595204101946,
-        0.6988897891,
-        0,
-        20
-      ]
+      "box" : [ 0.2524109, 9.536743E-7, 4.5, 16.257824, 0.0, 0.0, 0.0, -19.717258, 0.0, 0.0, 0.0, 4.5 ]
     },
     "refine": "ADD",
-    "geometricError": 268.37878244706053,
-    "content": {
+    "geometricError": 0,
+    "contents": [{
       "uri": "Tile_+000_+002.obj_deoffset.glb",
-      "boundingVolume": {
-        "region": [
-          -1.3197004795898053,
-          0.6988582109,
-          -1.3196595204101946,
-          0.6988897891,
-          0,
-          20
-        ]
-      }
-    }
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 1032,
+          "materials" : 5
+        }
+      },
+      "group" : 0
+    },{
+      "uri": "Tile_+000_+003.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 1032,
+          "materials" : 5
+        }
+      },
+      "group" : 1
+    },{
+      "uri": "Tile_+001_+001.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 1032,
+          "materials" : 5
+        }
+      },
+      "group" : 1
+    },{
+      "uri": "Tile_+001_+002.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 1032,
+          "materials" : 5
+        }
+      },
+      "group" : 1
+    }]
   }
 }

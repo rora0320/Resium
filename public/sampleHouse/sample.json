@@ -107,7 +107,7 @@
       },
       "geometricError" : 0.0,
       "contents" : [ {
-        "uri" : "Tile_+000_+002.obj_deoffset.glb",
+        "uri" : "house-3-0.glb",
         "metadata" : {
           "class" : "exampleContentMetadataClass",
           "properties" : {
@@ -117,7 +117,7 @@
         },
         "group" : 0
       }, {
-        "uri" : "Tile_+000_+003.obj_deoffset.glb",
+        "uri" : "tree-spruce-0-0.glb",
         "metadata" : {
           "class" : "exampleContentMetadataClass",
           "properties" : {
@@ -127,7 +127,7 @@
         },
         "group" : 1
       }, {
-        "uri" : "Tile_+001_+001.obj_deoffset.glb",
+        "uri" : "tree-spruce-0-1.glb",
         "metadata" : {
           "class" : "exampleContentMetadataClass",
           "properties" : {
@@ -137,7 +137,7 @@
         },
         "group" : 1
       }, {
-        "uri" : "Tile_+001_+002.obj_deoffset.glb",
+        "uri" : "tree-spruce-0-2.glb",
         "metadata" : {
           "class" : "exampleContentMetadataClass",
           "properties" : {
@@ -146,7 +146,17 @@
           }
         },
         "group" : 1
-      }],
+      }, {
+        "uri" : "tree-spruce-0-3.glb",
+        "metadata" : {
+          "class" : "exampleContentMetadataClass",
+          "properties" : {
+            "vertices" : 675,
+            "materials" : 1
+          }
+        },
+        "group" : 1
+      } ],
       "metadata" : {
         "class" : "exampleTileMetadataClass",
         "properties" : {
