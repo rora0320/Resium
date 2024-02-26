@@ -12,48 +12,56 @@
     "boundingVolume": {
       "box" : [ 0.2524109, 9.536743E-7, 4.5, 16.257824, 0.0, 0.0, 0.0, -19.717258, 0.0, 0.0, 0.0, 4.5 ]
     },
-    "refine": "ADD",
-    "geometricError": 0,
+    "geometricError" : 512.0,
+    "refine" : "ADD",
+
     "contents": [{
-      "uri": "Tile_+000_+002.obj_deoffset.glb",
+      "uri": "./Tile_+001_+001.obj_deoffset.glb",
       "metadata" : {
         "class" : "exampleContentMetadataClass",
         "properties" : {
-          "vertices" : 1032,
-          "materials" : 5
+          "vertices" : 468,
+          "materials" : 1
         }
       },
       "group" : 0
     },{
-      "uri": "Tile_+000_+003.obj_deoffset.glb",
+      "uri": "./Tile_+001_+002.obj_deoffset.glb",
       "metadata" : {
         "class" : "exampleContentMetadataClass",
         "properties" : {
-          "vertices" : 1032,
-          "materials" : 5
+          "vertices" : 468,
+          "materials" : 1
         }
       },
       "group" : 1
     },{
-      "uri": "Tile_+001_+001.obj_deoffset.glb",
+      "uri": "./Tile_+001_+003.obj_deoffset.glb",
       "metadata" : {
         "class" : "exampleContentMetadataClass",
         "properties" : {
-          "vertices" : 1032,
-          "materials" : 5
+          "vertices" : 468,
+          "materials" : 1
         }
       },
       "group" : 1
     },{
-      "uri": "Tile_+001_+002.obj_deoffset.glb",
+      "uri": "./Tile_+001_+004.obj_deoffset.glb",
       "metadata" : {
         "class" : "exampleContentMetadataClass",
         "properties" : {
-          "vertices" : 1032,
+          "vertices" : 468,
           "materials" : 5
         }
       },
-      "group" : 1
-    }]
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
+    } ]
   }
 }

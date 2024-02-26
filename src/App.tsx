@@ -40,15 +40,53 @@ function App() {
     const viewerRef=useRef<CesiumComponentRef<CesiumViewer>>(null);
     const [flyGetPosition,setFlyGetPosition]=useState(flyToPoint);
     const [isShow,setIsShow] = useState(false)
+    const [rotatedFixedFrame1,setRotatedFixedFrame1]=useState<Matrix4>(rotatedFixedFrame)
+
     useEffect(() => {
         console.log('ref.current?.',viewerRef.current)
         if(viewerRef.current?.cesiumElement) {
             console.log('세슘 요소 있음.')
         }else{
+
             console.log('세슘 요소 없음.')
         }
+        glbTileSetInfo();
     }, []);
 
+const glbTileSetInfo = async ()=>{
+    const tileList = await (await fetch("/glbTest.json")).json();
+    const coordsList = await (await fetch('/rectCoords.jsonl')).text();
+
+    const lines = coordsList.split("\n");
+    const newLines = lines
+        .map((line) => {
+            if (line) {
+                return JSON.parse(line); // 각 줄을 JSON으로 파싱
+            }
+            return null;
+        })
+        .filter(Boolean); // 빈 줄 제거
+    const jsonObjects = await Promise.all(newLines);
+
+    console.log('tileList',tileList)
+    console.log('jsonObjects',jsonObjects)
+    const test = jsonObjects.map((jsonObj)=>{
+        const tiles =tileList.root.contents.filter((tile)=> tile.uri===jsonObj.filePath)
+        console.log('tiles',tiles)
+        if(tiles.length>0){
+            //model 위치 가져온것
+            const origin = Cartesian3.fromDegrees(jsonObj.bottomRight[0], jsonObj.bottomRight[1], 1);
+            const rotationAngle = Cesium.Math.toRadians(-90);
+// y축 90도 회전된 프레임 생성
+            const rotationMatrix = Matrix3.fromRotationX(rotationAngle); // Y축을 중심으로 90도 회전
+            const fixedFrame = Transforms.eastNorthUpToFixedFrame(origin);
+            const rotatedFixedFrame = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatrix, new Matrix4());
+            setRotatedFixedFrame1(rotatedFixedFrame)
+            return jsonObj
+        }
+    }).filter(Boolean)
+    console.log('test',test)
+}
 
     const getPosition=(e)=>{
 
@@ -156,9 +194,7 @@ function App() {
                 {/*</Model>*/}
             <Cesium3DTileset
                 url={"glbTest.json"}
-                modelMatrix={rotatedFixedFrame}
-                // modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
-                //     Cesium.Cartesian3.fromDegrees(75.152325, 39.94704, 0.0))}
+                modelMatrix={rotatedFixedFrame1}
                 // modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
                 //     Cesium.Cartesian3.fromDegrees(75.152325, 39.94704, 0.0))}
                 onReady={tileset => {
