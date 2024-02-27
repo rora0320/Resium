@@ -9,7 +9,14 @@ import {
 } from "resium";
 
 import * as Cesium from "cesium";
-import {Ellipsoid, Viewer as CesiumViewer} from "cesium";
+import {
+    Cartographic,
+    CesiumTerrainProvider, ClockViewModel,
+    createWorldTerrainAsync,
+    Ellipsoid, sampleTerrain,
+    TerrainProvider,
+    Viewer as CesiumViewer
+} from "cesium";
 import { Matrix3, Matrix4, Transforms, Cartesian3, Color, CornerType } from "cesium";
 import {useEffect, useRef, useState} from "react";
 
@@ -22,36 +29,48 @@ const lookAtPoint = {
     offset:new Cartesian3(-74.0707383,40.7117244,10000000)
 }
 //카메라 날아가서 위치 변경
-const flyToPoint=Cartesian3.fromDegrees(130.0707383,36.329436052073596,10000000);
-const center = Cartesian3.fromDegrees(125.59777, 40.03883);
-
-//model 위치 가져온것
-const origin = Cartesian3.fromDegrees(127.38196357284114, 36.329436052073596, 1);
-const rotationAngle = Cesium.Math.toRadians(-90);
-// y축 90도 회전된 프레임 생성
-const rotationMatrix = Matrix3.fromRotationX(rotationAngle); // Y축을 중심으로 90도 회전
-const fixedFrame = Transforms.eastNorthUpToFixedFrame(origin);
-const rotatedFixedFrame = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatrix, new Matrix4());
-
-const cameraDest = Cartesian3.fromDegrees(125.0, 40.0, 1000);
-const modelMatrix = Transforms.eastNorthUpToFixedFrame(origin);
+const flyToPoint=Cartesian3.fromDegrees(127.38196357284114,36.32838543812952,1000);
+// const center = Cartesian3.fromDegrees(125.59777, 40.03883);
+//
+// //model 위치 가져온것
+// const origin = Cartesian3.fromDegrees(127.38196357284114, 36.32838543812952, 1);
+// const rotationAngle = Cesium.Math.toRadians(-90);
+// // y축 90도 회전된 프레임 생성
+// const rotationMatrix = Matrix3.fromRotationX(rotationAngle); // Y축을 중심으로 90도 회전
+// const fixedFrame = Transforms.eastNorthUpToFixedFrame(origin);
+// const rotatedFixedFrame = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatrix, new Matrix4());
+//
+// const cameraDest = Cartesian3.fromDegrees(125.0, 40.0, 1000);
+// const modelMatrix = Transforms.eastNorthUpToFixedFrame(origin);
 function App() {
-
+    const [terrain, setTerrain] = useState<CesiumTerrainProvider | undefined>();
     const viewerRef=useRef<CesiumComponentRef<CesiumViewer>>(null);
     const [flyGetPosition,setFlyGetPosition]=useState(flyToPoint);
-    const [isShow,setIsShow] = useState(false)
-    const [rotatedFixedFrame1,setRotatedFixedFrame1]=useState<Matrix4>(rotatedFixedFrame)
+    const [entityModel,setEntityModel]=useState(<></>)
 
     useEffect(() => {
-        console.log('ref.current?.',viewerRef.current)
+
+        if (!terrain) {
+            createWorldTerrainAsync().then((terrain) => {
+                setTerrain(terrain);
+            });
+        }
+
+    }, []);
+
+    useEffect(() => {
+
         if(viewerRef.current?.cesiumElement) {
             console.log('세슘 요소 있음.')
+            glbTileSetInfo();
+
         }else{
 
             console.log('세슘 요소 없음.')
         }
-        glbTileSetInfo();
-    }, []);
+        // glbTileSetInfo();
+    }, [terrain]);
+
 
 const glbTileSetInfo = async ()=>{
     const tileList = await (await fetch("/glbTest.json")).json();
@@ -63,25 +82,32 @@ const glbTileSetInfo = async ()=>{
             if (line) {
                 return JSON.parse(line); // 각 줄을 JSON으로 파싱
             }
-            return null;
         })
         .filter(Boolean); // 빈 줄 제거
     const jsonObjects = await Promise.all(newLines);
 
     console.log('tileList',tileList)
     console.log('jsonObjects',jsonObjects)
-    const test = jsonObjects.map((jsonObj)=>{
+    // const TileSet = await Cesium.createOsmBuildingsAsync();
+    // viewerRef.current.cesiumElement.scene.primitives.add(TileSet);
+    const list=[];
+    const test = jsonObjects.map((jsonObj,index)=>{
         const tiles =tileList.root.contents.filter((tile)=> tile.uri===jsonObj.filePath)
-        console.log('tiles',tiles)
         if(tiles.length>0){
             //model 위치 가져온것
-            const origin = Cartesian3.fromDegrees(jsonObj.bottomRight[0], jsonObj.bottomRight[1], 1);
-            const rotationAngle = Cesium.Math.toRadians(-90);
-// y축 90도 회전된 프레임 생성
-            const rotationMatrix = Matrix3.fromRotationX(rotationAngle); // Y축을 중심으로 90도 회전
+            const origin = Cartesian3.fromDegrees(jsonObj.bottomLeft[0], jsonObj.bottomLeft[1], jsonObj.z[0]);
             const fixedFrame = Transforms.eastNorthUpToFixedFrame(origin);
-            const rotatedFixedFrame = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatrix, new Matrix4());
-            setRotatedFixedFrame1(rotatedFixedFrame)
+            const rotationAngle = Cesium.Math.toRadians(-90);
+            // Y축을 중심으로 90도 회전
+            const rotationMatriY = Matrix3.fromRotationY(rotationAngle);
+            //x축 90도 회전된 프레임 생성
+            const rotationMatriX = Matrix3.fromRotationX(rotationAngle);
+
+            const rotatedFixedFrameY = Matrix4.multiplyByMatrix3(fixedFrame, rotationMatriY, new Matrix4());
+            const rotatedFixedFrameX = Matrix4.multiplyByMatrix3(rotatedFixedFrameY, rotationMatriX, new Matrix4());
+
+            list.push(<Model key={`model_${index}`} url={jsonObj.filePath} modelMatrix={rotatedFixedFrameX} />)
+            setEntityModel(list)
             return jsonObj
         }
     }).filter(Boolean)
@@ -137,7 +163,12 @@ const glbTileSetInfo = async ()=>{
     }
 
     return (
-        <Viewer full ref={viewerRef}>
+        <>
+        {!terrain ? (
+        null
+    ) : (
+        <Viewer full ref={viewerRef} terrainProvider={terrain}>
+
 
             {/*/!*<CameraLookAt {...lookAtPoint}/>*!/*/}
             {/*/!*<Camera />*!/*/}
@@ -192,23 +223,27 @@ const glbTileSetInfo = async ()=>{
                 {/*       scale={5.0}*/}
                 {/*>*/}
                 {/*</Model>*/}
-            <Cesium3DTileset
-                url={"glbTest.json"}
-                modelMatrix={rotatedFixedFrame1}
-                // modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(
-                //     Cesium.Cartesian3.fromDegrees(75.152325, 39.94704, 0.0))}
-                onReady={tileset => {
-                    console.log('tileset',tileset)
-                  viewerRef.current?.cesiumElement?.zoomTo(tileset);
-                }}
-            />
+            <CameraFlyTo destination={flyGetPosition}/>
 
+            {/*<Cesium3DTileset*/}
+            {/*    url={"glbTest.json"}*/}
+            {/*    // modelMatrix={rotatedFixedFrame1}*/}
+            {/*    // modelMatrix={Cesium.Transforms.eastNorthUpToFixedFrame(*/}
+            {/*    //     Cesium.Cartesian3.fromDegrees(75.152325, 39.94704, 0.0))}*/}
+            {/*    onReady={tileset => {*/}
+            {/*        console.log('tileset',tileset)*/}
+            {/*      viewerRef.current?.cesiumElement?.zoomTo(tileset);*/}
+            {/*    }}*/}
+            {/*/>*/}
+            {entityModel}
             {/*<PointPrimitiveCollection modelMatrix={Transforms.eastNorthUpToFixedFrame(center)}>*/}
             {/*    <PointPrimitive color={Color.ORANGE} position={new Cartesian3(58.0,58.0,0.0)}  onClick={(e)=>getPosition(e)}/>*/}
             {/*    <PointPrimitive color={Color.YELLOW} position={new Cartesian3(100000.0, -200000.0, 0.0)}/>*/}
             {/*</PointPrimitiveCollection>*/}
             {/*<CameraFlyTo destination={flyGetPosition} duration={2.0}/>*/}
         </Viewer>
+        )}
+        </>
     );
 }
 

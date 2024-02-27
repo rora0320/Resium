@@ -4,8 +4,7 @@
   },
   "properties": {
     "Height": {
-      "minimum": 1,
-      "maximum": 241.6
+      "minimum": 1
     }
   },
   "root": {
@@ -47,6 +46,57 @@
       "group" : 1
     },{
       "uri": "./Tile_+001_+004.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 468,
+          "materials" : 5
+        }
+      },
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
+    },{
+      "uri": "./Tile_+001_+006.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 468,
+          "materials" : 5
+        }
+      },
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
+    },{
+      "uri": "./Tile_+001_+007.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 468,
+          "materials" : 5
+        }
+      },
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
+    },{
+      "uri": "./Tile_+002_+001.obj_deoffset.glb",
       "metadata" : {
         "class" : "exampleContentMetadataClass",
         "properties" : {
