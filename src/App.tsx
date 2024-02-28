@@ -87,8 +87,8 @@ const glbTileSetInfo = async ()=>{
         .filter(Boolean); // 빈 줄 제거
     const jsonObjects = await Promise.all(newLines);
 
-    console.log('tileList',tileList)
-    console.log('jsonObjects',jsonObjects)
+    // console.log('tileList',tileList)
+    // console.log('jsonObjects',jsonObjects)
     // const TileSet = await Cesium.createOsmBuildingsAsync();
     // viewerRef.current.cesiumElement.scene.primitives.add(TileSet);
     const list=[];
@@ -97,24 +97,36 @@ const glbTileSetInfo = async ()=>{
         if(tiles.length>0){
             // 여기부터 고도 구하기
             const positions = [
-                Cartographic.fromDegrees(jsonObj.bottomLeft[0], jsonObj.bottomLeft[1])
+                Cartographic.fromDegrees(jsonObj.middleCenter[0], jsonObj.middleCenter[1])
             ];
             // # 테레인 고도 구하기
             let sampleLong=0;
             let sampleHeight = 0;
             let samplelatitude=0;
-            const carte: Cartesian3 = new Cartesian3(0, 0, 0);
+
             if (terrain) {
+                // console.log('terrain',terrain)
+                // // 디그리 jsonObj.bottomLeft[0]
+                //
+                // const cartographicPosition = Cesium.Cartographic.fromDegrees(jsonObj.bottomLeft[0], jsonObj.bottomLeft[1]);
+                // console.log('cartographicPosition',cartographicPosition)
+                // const 테레인하이 = viewerRef.current?.cesiumElement.scene.globe.getHeight(cartographicPosition);
+                // // console.log('테레인하이',테레인하이)
+
 
                 sampleTerrain(terrain, 11, positions).then((updatedPositions) => {
                     const [{ height,latitude,longitude }] = updatedPositions;
                     sampleLong=longitude
                     samplelatitude=latitude;
                     sampleHeight = height;
+                    //
+                    // console.log('위도:', Cesium.Math.toDegrees(latitude));   // 디그리로 변환한 위도 값
+                    // console.log('경도:', Cesium.Math.toDegrees(longitude));  // 디그리로 변환한 경도 값
                     console.log(
                         `${sampleLong}, ${samplelatitude} 위치의 고도는 ${sampleHeight}m 입니다.`
                     );
                 });
+
             }
 
             //model 위치 가져온것
@@ -190,7 +202,7 @@ const glbTileSetInfo = async ()=>{
         {!terrain ? (
         null
     ) : (
-        <Viewer full ref={viewerRef} terrainProvider={terrain}>
+        <Viewer full ref={viewerRef} terrainProvider={terrain} >
 
 
             {/*/!*<CameraLookAt {...lookAtPoint}/>*!/*/}
