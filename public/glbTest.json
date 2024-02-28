@@ -112,6 +112,57 @@
           "population" : 18
         }
       }
+    },{
+      "uri": "./Tile_+002_+002.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 468,
+          "materials" : 5
+        }
+      },
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
+    },{
+      "uri": "./Tile_+002_+003.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 468,
+          "materials" : 5
+        }
+      },
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
+    },{
+      "uri": "./Tile_+002_+004.obj_deoffset.glb",
+      "metadata" : {
+        "class" : "exampleContentMetadataClass",
+        "properties" : {
+          "vertices" : 468,
+          "materials" : 5
+        }
+      },
+      "group" : 1,
+      "metadata" : {
+        "class" : "exampleTileMetadataClass",
+        "properties" : {
+          "district" : "Market East",
+          "population" : 18
+        }
+      }
     } ]
   }
 }

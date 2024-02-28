@@ -13,12 +13,13 @@ import {
     Cartographic,
     CesiumTerrainProvider, ClockViewModel,
     createWorldTerrainAsync,
-    Ellipsoid, sampleTerrain,
+    Ellipsoid, InterpolationAlgorithm, sampleTerrain, sampleTerrainMostDetailed,
     TerrainProvider,
     Viewer as CesiumViewer
 } from "cesium";
 import { Matrix3, Matrix4, Transforms, Cartesian3, Color, CornerType } from "cesium";
 import {useEffect, useRef, useState} from "react";
+import interpolate = module
 
 // 포인터 위치
 const position = Cartesian3.fromDegrees(74.0707383, 40.7117244, 100);
@@ -94,8 +95,31 @@ const glbTileSetInfo = async ()=>{
     const test = jsonObjects.map((jsonObj,index)=>{
         const tiles =tileList.root.contents.filter((tile)=> tile.uri===jsonObj.filePath)
         if(tiles.length>0){
+            // 여기부터 고도 구하기
+            const positions = [
+                Cartographic.fromDegrees(jsonObj.bottomLeft[0], jsonObj.bottomLeft[1])
+            ];
+            // # 테레인 고도 구하기
+            let sampleLong=0;
+            let sampleHeight = 0;
+            let samplelatitude=0;
+            const carte: Cartesian3 = new Cartesian3(0, 0, 0);
+            if (terrain) {
+
+                sampleTerrain(terrain, 11, positions).then((updatedPositions) => {
+                    const [{ height,latitude,longitude }] = updatedPositions;
+                    sampleLong=longitude
+                    samplelatitude=latitude;
+                    sampleHeight = height;
+                    console.log(
+                        `${sampleLong}, ${samplelatitude} 위치의 고도는 ${sampleHeight}m 입니다.`
+                    );
+                });
+            }
+
             //model 위치 가져온것
-            const origin = Cartesian3.fromDegrees(jsonObj.bottomLeft[0], jsonObj.bottomLeft[1], jsonObj.z[0]);
+            const origin = Cartesian3.fromDegrees(jsonObj.bottomLeft[0], jsonObj.bottomLeft[1], jsonObj.z[0]+25);
+
             const fixedFrame = Transforms.eastNorthUpToFixedFrame(origin);
             const rotationAngle = Cesium.Math.toRadians(-90);
             // Y축을 중심으로 90도 회전
@@ -137,7 +161,6 @@ const glbTileSetInfo = async ()=>{
                 duration: 2.0,
             });
 
-            setIsShow(true)
         } else {
             console.error('Unable to determine valid flyPosition');
         }
